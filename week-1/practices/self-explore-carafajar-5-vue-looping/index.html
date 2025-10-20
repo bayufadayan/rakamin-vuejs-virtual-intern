@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue JS Conditional Rendering</title>
+  </head>
+  <body>
+    <div id="app">
+      <div v-for="angka in 10">{{ angka }}</div>
+      <hr />
+      <span v-for="angka in 10">{{ angka }}</span>
+      <hr />
+      <ul v-for="angka in 10">
+        <li>{{ angka }}</li>
+      </ul>
+      <hr />
+
+      <!-- Looping dari Array -->
+      <ol>
+        <li v-for="fruit in fruits">{{ fruit }}</li>
+      </ol>
+
+      <!-- Looping dari Object -->
+        <table border="1">
+          <thead>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Position</th>
+            <th>Index</th>
+          </thead>
+
+          <tbody>
+            <tr v-for="(player, index) in footballPlayers">
+              <td>{{ player.name }}</td>
+              <td>{{ player.country }}</td>
+              <td>{{ player.position }}</td>
+              <td>{{ index }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br><br><br>
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      const app = createApp({
+        data() {
+          return {
+            fruits: ["apple", "banana", "cherry", "grape", "kiwi", "mango"],
+            footballPlayers: [
+              { name: "Lionel Messi", country: "Argentina", position: "Forward" },
+              { name: "Cristiano Ronaldo", country: "Portugal", position: "Forward" },
+              { name: "Neymar Jr", country: "Brazil", position: "Forward" },
+              { name: "Kylian Mbappe", country: "France", position: "Forward" },
+              { name: "Luka Modric", country: "Croatia", position: "Midfielder" },
+              { name: "Luis Suarez", country: "Uruguay", position: "Forward" }
+            ],
+          };
+        },
+        methods: {},
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
