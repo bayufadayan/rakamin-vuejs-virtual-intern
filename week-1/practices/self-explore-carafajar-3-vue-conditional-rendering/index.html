@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue JS Conditional Rendering</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- V-IF -->
+      <span v-if="tampil">{{ message }}</span>
+      <span v-if="nilai > 8"> Nilai Kamu {{ nilai }}, Predikat Kamu A </span>
+      <span v-else-if="nilai <= 8 && nilai>= 6">
+        Nilai Kamu {{ nilai }}, Predikat Kamu B
+      </span>
+      <span v-else> Nilai Kamu {{ nilai }}, Predikat Kamu C </span>
+
+      <br><br><br>
+
+      <!-- V-SHOW -->
+      <div>
+        <button @click="toggleLampu()">Saklar Lampur</button>
+        <div v-show="lampu">Lampu Menyala</div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      const app = createApp({
+        data() {
+          return {
+            message: "Hello Vue",
+            tampil: true,
+            nilai: 5,
+            lampu: true,
+          };
+        },
+        methods: {
+          toggleLampu() {
+            this.lampu = !this.lampu;
+          },
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
