@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue JS Conditional Rendering</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Click Event -->
+      <div>
+        <span>
+          <button v-on:click="count--">-</button>
+          <button @click="mengurangi(2)">- 2</button>
+        </span>
+        {{ count }}
+        <span>
+          <button v-on:click="count++">+</button>
+          <button @click="tambah(2)">+ 2</button>
+        </span>
+      </div>
+      <hr />
+
+      <button @click="sayHello('Bayu')">Say Hello Vue</button>
+      <br />
+      <hr />
+
+      <!-- Keyup and Keydown Event -->
+      <div>
+        <input
+          type="text"
+          v-on:keydown.enter="sayHello('Ini Pakai V-ON')"
+          placeholder="Tekan Enter"
+        />
+        <br />
+        <input
+          type="text"
+          @keydown.space="sayHello('Ini Pakai @keydown')"
+          placeholder="Tekan Space"
+        />
+      </div>
+      <br />
+      <hr />
+
+      <!-- Prevent Default -->
+      <div>
+        <!-- Atau bisa juga pakai v-on:submit.prevent -->
+        <form method="post" @submit.prevent>
+          <input type="text" placeholder="Gatau dah ini mah" />
+          <input type="submit" value="Kirim Tanpa refresh" />
+        </form>
+      </div>
+
+      <br /><br /><br />
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      const app = createApp({
+        data() {
+          return {
+            count: 0,
+          };
+        },
+        methods: {
+          tambah(angka) {
+            this.count += angka;
+          },
+          mengurangi(angka) {
+            this.count -= angka;
+          },
+          sayHello(name) {
+            alert("HelloVue too " + name);
+          },
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
