@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Try Vue with ESModule</title>
+  </head>
+  <body>
+    <div id="app">
+      <div>{{ count }}</div>
+      <div>{{ message }}</div>
+      <div v-text="message2">Akan Ter-replace</div>
+      <div v-html="message3">Akan Ter-replace</div>
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      createApp({
+        data() {
+          return {
+            count: 0,
+            message: "Hello World",
+            message2: "Hello World 2 Pakai v-text",
+            message3: "<strong>Hello World 2 Pakai v-html dan bold</strong>",
+          };
+        },
+        methods: {
+          tambah() {
+            this.count++;
+          },
+          kurang() {
+            this.count--;
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

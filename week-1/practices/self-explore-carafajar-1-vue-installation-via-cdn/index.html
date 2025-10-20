@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Try Vue with CDN</title>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body>
+    <!-- CDN is Content Delivery Network 
+    https://app.unpkg.com/vue@3.5.22/files/dist -->
+
+    <div id="app">{{ message }}</div>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            message: "Hello Vue, Aku loVue Bangett!",
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
