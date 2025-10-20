@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue JS Attributes Binding</title>
+    <style>
+      .warnaMerah {
+        color: red;
+      }
+
+      #fontGede {
+        font-size: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Setiap v-bind shorthand nya adalah :href tergantung nama nya -->
+      <a v-bind:href="url">Menuju Portofolio</a>
+      
+      <h1 :class="selectedClass" :id="selectedId">{{ user.name }}</h1>
+      <img :src="user.profile" :alt="'Image of ' + user.name" :style="{width: responsiveWidth}" :title="`Image of ${user.name}`">
+
+      <br /><br /><br />
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      const app = createApp({
+        data() {
+          return {
+            url: "https://bayufadayan.my.id/",
+            user: {
+              name: "Bayu Fadayan",
+              profile: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=387"
+            },
+            responsiveWidth: "100px",
+            selectedClass: "warnaMerah",
+            selectedId: "fontGede",
+          };
+        },
+        methods: {
+          
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

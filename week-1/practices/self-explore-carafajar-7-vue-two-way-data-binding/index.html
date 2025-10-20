@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue JS Two Way Data Binding</title>
+
+    <style>
+      #app {
+        position: relative;
+      }
+
+      .result {
+        position: fixed;
+        top: 0;
+        right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Ini Contoh Form</h1>
+      <div>
+        <label for="name">Name</label><br />
+        <input type="text" name="name" placeholder="Name" v-model="username"/>
+      </div>
+      <br /><br />
+      <div>
+        <label for="address">Addres</label><br />
+        <textarea name="address" id="address" cols="30" rows="10" v-model="address" placeholder="Masukan Alamat"></textarea>
+      </div>
+      <br /><br />
+      <div>
+        <label for="address">Gender</label>
+        <div>
+          <input type="radio" name="man" id="man" value="Laki Laki" v-model="gender"/>
+          <label for="man">Laki Laki</label>
+          <br />
+          <input type="radio" name="woman" id="woman" value="Perempuan" v-model="gender"/>
+          <label for="woman">Perempuan</label>
+        </div>
+      </div>
+      <br /><br />
+      <div>
+        <p>hobbies</p>
+        <span>
+          <input type="checkbox" name="volly" id="volly" value="Volly" v-model="hobbies"/>
+          <label for="volly">Volly</label> </span
+        ><br />
+        <span>
+          <input type="checkbox" name="basket" id="basket" value="Basket" v-model="hobbies"/>
+          <label for="basket">Basket</label> </span
+        ><br />
+        <span>
+          <input type="checkbox" name="footbal" id="footbal" value="Football" v-model="hobbies"/>
+          <label for="footbal">Football</label> </span
+        ><br />
+        <span>
+          <input type="checkbox" name="baseball" id="baseball" value="Baseball" v-model="hobbies"/>
+          <label for="baseball">Baseball</label>
+        </span>
+      </div>
+      <br /><br />
+      <div>
+        <label for="position">Position</label><br />
+        <select name="pos" id="position" v-model="position">
+          <option value="" disabled>Pilih Posisi</option>
+          <option value="Staff">Staff</option>
+          <option value="Manager">Manager</option>
+          <option value="CEO">CEO</option>
+        </select>
+      </div>
+
+      <br /><br /><br />
+
+      <div class="result">
+        <h1>HASIL</h1>
+        <table border="1" width="500px" cellpadding="10" cellspacing="0">
+          <tr>
+            <td>Name</td>
+            <td>{{ username }}</td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>{{ address }}</td>
+          </tr>
+          <tr>
+            <td>Gender</td>
+            <td>{{ gender }}</td>
+          </tr>
+          <tr>
+            <td>hobbies</td>
+            <td v-if="hobbies.length > 0">
+              <ul>
+                <li v-for="hobby in hobbies">
+                  {{ hobby }}
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td>Position</td>
+            <td>{{ position }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      const app = createApp({
+        data() {
+          return {
+            username: "",
+            address: "",
+            gender: "",
+            hobbies: [],
+            position: "",
+          };
+        },
+        methods: {},
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
