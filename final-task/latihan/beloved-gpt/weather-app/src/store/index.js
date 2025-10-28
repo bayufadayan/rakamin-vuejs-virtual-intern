@@ -50,6 +50,18 @@ export default new Vuex.Store({
                 ...state.errorByKey,
                 [key]: message || null,
             }
+        },
+
+        addFavorite(state, cityName) {
+            const name = (cityName || "").trim();
+            if (!name) return;
+            if (!state.favorites.includes(name)) {
+                state.favorites.push(name);
+            }
+        },
+
+        removeFavorite(state, cityName) {
+            state.favorites = state.favorites.filter(c => c !== cityName);
         }
     },
 
@@ -97,6 +109,15 @@ export default new Vuex.Store({
             dispatch("persist");
         },
 
+        toggleFavorite({ state, commit, dispatch }, cityName) {
+            if (state.favorites.includes(cityName)) {
+                commit("removeFavorite", cityName);
+            } else {
+                commit("addFavorite", cityName);
+            }
+            dispatch("persist");
+        },
+
         persist({ state }) {
             localStorage.setItem(
                 "weather:state",
@@ -123,6 +144,10 @@ export default new Vuex.Store({
 
         error: (state) => (cityName, units) => {
             return state.errorByKey[cacheKey(cityName, units)] || null;
+        },
+
+        isFavorite: (state) => (cityName) => {
+            return state.favorites.includes((cityName || "").trim());
         }
     }
 });

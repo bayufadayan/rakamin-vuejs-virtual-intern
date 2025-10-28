@@ -1,11 +1,21 @@
 <script>
 export default {
     name: "HomeView",
+    
     data() {
         return {
             cityInput: "Jakarta"
         };
     },
+
+    created() {
+        const fromQuery = this.$route.query.city;
+        if (fromQuery) {
+            this.cityInput = fromQuery;
+            this.fetchWeatherNow();
+        }
+    },
+
     computed: {
         units() {
             return this.$store.state.units;
@@ -35,12 +45,19 @@ export default {
             const n = Math.round(Number(value));
             return this.units === "metric" ? `${n}°C` : `${n}°F`;
         },
+
         async onChangeUnits(event) {
             const nextUnits = event.target.value;
             await this.$store.dispatch("changeUnits", nextUnits);
             // refetch utk kota aktif (pakai cache per-unit kalau ada)
             if ((this.cityInput || "").trim()) this.fetchWeatherNow();
-        }
+        },
+
+        toggleFavoriteCurrent() {
+            const city = this.weatherData?.name;
+            if (!city) return;
+            this.$store.dispatch("toggleFavorite", city);
+        },
     }
 };
 </script>
@@ -82,8 +99,15 @@ export default {
                         {{ weatherData.weather && weatherData.weather[0] && weatherData.weather[0].description }}
                     </div>
                 </div>
-                <div class="temp">
-                    {{ formatTemp(weatherData.main && weatherData.main.temp) }}
+
+                <div style="text-align:right;">
+                    <div class="temp">
+                        {{ formatTemp(weatherData.main && weatherData.main.temp) }}
+                    </div>
+                    <button class="btn" @click="toggleFavoriteCurrent"
+                        :aria-pressed="$store.getters.isFavorite(weatherData.name)" style="margin-top:6px;">
+                        {{ $store.getters.isFavorite(weatherData.name) ? "★ Favorit" : "☆ Jadikan Favorit" }}
+                    </button>
                 </div>
             </div>
 
