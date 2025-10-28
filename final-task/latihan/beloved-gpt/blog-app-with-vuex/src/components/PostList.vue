@@ -37,6 +37,7 @@ export default {
                 <p class="content">{{ shortenContent(post.content) }}</p>
 
                 <div class="actions">
+                    <button @click.stop="$router.push('/post/' + (post.id || index))">Lihat</button>
                     <button @click.stop="$router.push('/edit/' + (post.id || i))">Edit</button>
                     <button class="danger" @click.stop="$emit('remove', i)">Hapus</button>
                 </div>

@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from '../views/Home.vue';
 import AddPost from '../views/AddPost.vue';
 import EditPost from '../views/EditPost.vue';
+import PostDetail from '../views/PostDetail.vue';
 
 Vue.use(Router)
 
@@ -24,6 +25,12 @@ export default new Router({
       name: "edit",
       component: EditPost,
       props: true
+    },
+    {
+      path: "/post/:id",
+      name: "detail",
+      component: PostDetail,
+      props: true,
     }
   ]
 })
