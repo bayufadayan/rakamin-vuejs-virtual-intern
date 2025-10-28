@@ -1,9 +1,10 @@
 <!-- eslint-disable vue/no-reserved-keys -->
 <script>
 export default {
-    props: ["id"],
+    props: ["slug"],
     data() {
         return {
+            id: null,
             title: "",
             content: "",
             createdAt: null,
@@ -16,22 +17,11 @@ export default {
         }
     },
     created() {
-        const post = this.$store.getters.postById(Number(this.id));
+        const post = this.$store.getters.postBySlug(this.slug);
         if (!post) return this.$router.replace("/");
-
-        const key = `draft:edit-post:${this.id}`;
-        const raw = localStorage.getItem(key);
-        const want = this.$route.query.restore ? true : (raw ? confirm("Lanjutkan dari draft edit?") : false);
-
-        if (want && raw) {
-            const d = JSON.parse(raw);
-            this.title = d.title ?? post.title;
-            this.content = d.content ?? post.content;
-        } else {
-            this.title = post.title;
-            this.content = post.content;
-            localStorage.removeItem(key);
-        }
+        this.id = post.id;
+        this.title = post.title;
+        this.content = post.content;
         this.createdAt = post.createdAt;
     },
     watch: {
@@ -52,12 +42,11 @@ export default {
         save() {
             if (!this.title.trim() || !this.content.trim()) return;
             this.$store.dispatch("updateExistingPost", {
-                id: Number(this.id),
+                id: this.id,
                 title: this.title.trim(),
                 content: this.content.trim(),
-                createdAt: this.createdAt || new Date().toISOString()
+                createdAt: this.createdAt
             });
-            this.clearDraft();
             this.$router.push("/");
         },
         cancel() {

@@ -28,8 +28,8 @@ export default {
                 <p class="content">{{ shortenContent(post.content) }}</p>
 
                 <div class="actions">
-                    <button class="btn" @click.stop="$router.push('/post/' + (post.id || i))">Lihat</button>
-                    <button class="btn" @click.stop="$router.push('/edit/' + (post.id || i))">Edit</button>
+                    <button class="btn" @click.stop="$router.push('/post/' + post.slug)">Lihat</button>
+                    <button class="btn" @click.stop="$router.push('/edit/' + post.slug)">Edit</button>
                     <button class="btn btn--danger" @click.stop="$emit('remove', post.id)">Hapus</button>
                 </div>
             </li>

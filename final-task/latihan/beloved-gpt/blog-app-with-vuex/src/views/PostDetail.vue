@@ -1,16 +1,18 @@
 <script>
 export default {
-    props: ["id"],
+    props: ["slug"],
     computed: {
-        post() { return this.$store.getters.postById(Number(this.id)); }
+        post() {
+            return this.$store.getters.postBySlug(this.slug);
+        }
     },
     methods: {
-        formatCreatedAt(timestamp) {
-            if (!timestamp) return "";
+        formatCreatedAt(ts) {
             try {
-                const date = new Date(timestamp);
-                return date.toLocaleString();
-            } catch { return ""; }
+                return ts ? new Date(ts).toLocaleString() : "";
+            } catch {
+                return "";
+            }
         }
     }
 };
@@ -24,7 +26,7 @@ export default {
             <p class="content">{{ post.content }}</p>
 
             <div class="actions">
-                <router-link class="btn" :to="`/edit/${post.id}`">Edit</router-link>
+                <router-link class="btn" :to="`/edit/${post.slug}`">Edit</router-link>
                 <router-link class="btn btn--ghost" to="/">Kembali</router-link>
             </div>
         </div>

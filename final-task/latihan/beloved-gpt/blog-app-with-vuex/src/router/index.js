@@ -22,13 +22,13 @@ export default new Router({
       component: AddPost
     },
     {
-      path: "/edit/:id",
+      path: "/edit/:slug",
       name: "edit",
       component: EditPost,
       props: true
     },
     {
-      path: "/post/:id",
+      path: "/post/:slug",
       name: "detail",
       component: PostDetail,
       props: true,
