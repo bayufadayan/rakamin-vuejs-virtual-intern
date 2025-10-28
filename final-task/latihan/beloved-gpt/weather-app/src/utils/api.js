@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_KEY = import.meta.env.VUE_APP_OWM_API_KEY;
+const API_KEY = import.meta.env.VITE_OWM_API_KEY
 
 export const api = axios.create({
     baseURL: "https://api.openweathermap.org/data/2.5",
@@ -10,5 +10,11 @@ export const api = axios.create({
 });
 
 export function getCurrentWeather(cityName, units = "metric") {
-    return api.get("/weather", { params: { q: cityName, units } });
+    return api.get("/weather", {
+        params: {
+            q: cityName,
+            units,
+            appid: API_KEY
+        }
+    });
 }

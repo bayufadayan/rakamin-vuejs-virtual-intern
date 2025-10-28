@@ -57,7 +57,6 @@ export default new Vuex.Store({
         init({ commit }) {
             try {
                 const savedState = localStorage.getItem("weather:state");
-
                 if (savedState) {
                     const parsedState = JSON.parse(savedState);
                     commit("loadPersisted", parsedState);
@@ -67,40 +66,45 @@ export default new Vuex.Store({
             }
         },
 
-        async featchWeather({ state, commit, getters }, cityName) {
+        async fetchWeather({ state, commit, getters }, cityName) { // <-- perbaiki nama
             const key = cacheKey(cityName, state.units);
 
-            const cached = getters.cached(cityName, state.units);
-            if (cached) return cached;
+            const cachedData = getters.cached(cityName, state.units);
+            if (cachedData) return cachedData;
 
-            commit("setLoading", {
-                key,
-                value: true
-            });
-            commit("setError", {
-                key,
-                message: null
-            });
+            commit("setLoading", { key, value: true });
+            commit("setError", { key, message: null });
 
             try {
                 const res = await getCurrentWeather(cityName, state.units);
-                commit("setWeather", {
-                    key,
-                    payload: res.data
-                });
-            } catch (err) {
-                const msg = err?.response?.data?.message || err?.message || "Fetch Failed";
-                commit("setError", {
-                    key,
-                    message: msg
-                });
-                throw err;
+                commit("setWeather", { key, payload: res.data });
+                return res.data;
+            } catch (error) {
+                const message =
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    "Fetch Failed";
+                commit("setError", { key, message });
+                throw error;
             } finally {
-                commit("setLoading", {
-                    key,
-                    value: false
-                });
+                commit("setLoading", { key, value: false });
             }
+        },
+
+        changeUnits({ commit, dispatch }, nextUnits) {
+            if (nextUnits !== "metric" && nextUnits !== "imperial") return;
+            commit("setUnits", nextUnits);
+            dispatch("persist");
+        },
+
+        persist({ state }) {
+            localStorage.setItem(
+                "weather:state",
+                JSON.stringify({
+                    units: state.units,
+                    favorites: state.favorites
+                })
+            );
         }
     },
 
