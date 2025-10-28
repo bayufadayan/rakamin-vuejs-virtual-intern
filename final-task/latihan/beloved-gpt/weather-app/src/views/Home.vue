@@ -1,7 +1,7 @@
 <script>
 export default {
     name: "HomeView",
-    
+
     data() {
         return {
             cityInput: "Jakarta"
@@ -28,6 +28,9 @@ export default {
         },
         loadError() {
             return this.$store.getters.error(this.cityInput, this.units);
+        },
+        recentSearches() {
+            return this.$store.state.recentSearches;
         }
     },
     methods: {
@@ -58,6 +61,16 @@ export default {
             if (!city) return;
             this.$store.dispatch("toggleFavorite", city);
         },
+
+        selectRecent(city) {
+            this.cityInput = city;
+            this.fetchWeatherNow();
+        },
+
+        clearRecent() {
+            this.$store.commit("clearRecent");
+            this.$store.dispatch("persist");
+        },
     }
 };
 </script>
@@ -70,7 +83,15 @@ export default {
         <div class="card controls">
             <input class="input" v-model="cityInput" placeholder="Cari kota… (mis. Jakarta, Bandung, Tokyo)"
                 @keyup.enter="fetchWeatherNow" />
-            <button class="btn btn--primary" @click="fetchWeatherNow">Cari</button>
+                <button class="btn btn--primary" @click="fetchWeatherNow">Cari</button>
+                <div v-if="recentSearches && recentSearches.length" class="card"
+                    style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <span style="color:#64748b;">Recent:</span>
+                    <button v-for="city in recentSearches" :key="city" class="chip" @click="selectRecent(city)">
+                        {{ city }}
+                    </button>
+                    <button class="link" @click="clearRecent">Clear</button>
+                </div>
 
             <!-- Units -->
             <select class="input" style="max-width:140px" :value="units" @change="onChangeUnits" aria-label="Units">
@@ -226,6 +247,24 @@ export default {
     border: 1px solid #e1e9ef;
     padding: 8px 10px;
     border-radius: 10px;
+}
+
+.chip {
+    border: 1px solid #d6d6d6;
+    background: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.link {
+    background: transparent;
+    border: 0;
+    color: #0b3a47;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0 4px;
 }
 
 @media (max-width: 560px) {

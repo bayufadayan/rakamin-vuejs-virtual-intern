@@ -12,11 +12,12 @@ function cacheKey(cityName, units) {
 
 export default new Vuex.Store({
     state: {
-        units: "metric",                 // "metric" | "imperial"
-        favorites: [],                   // ["Jakarta", "Bandung"]
-        weatherByCity: {},               // { "jakarta|metric": { data, ts } }
-        loadingByKey: {},                // { "jakarta|metric": boolean }
-        errorByKey: {}                   // { "jakarta|metric": string|null }
+        units: "metric",
+        favorites: [],
+        recentSearches: [],
+        weatherByCity: {},
+        loadingByKey: {},
+        errorByKey: {}
     },
 
     mutations: {
@@ -62,6 +63,23 @@ export default new Vuex.Store({
 
         removeFavorite(state, cityName) {
             state.favorites = state.favorites.filter(c => c !== cityName);
+        },
+
+        setRecentSearches(state, list) {
+            state.recentSearches = Array.isArray(list) ? list : [];
+        },
+
+        addRecentSearch(state, cityName) {
+            const name = (cityName || "").trim();
+            if (!name) return;
+            const dedup = state.recentSearches.filter(
+                c => c.toLowerCase() !== name.toLowerCase()
+            );
+            state.recentSearches = [name, ...dedup].slice(0, 10); // simpan max 10
+        },
+
+        clearRecent(state) {
+            state.recentSearches = [];
         }
     },
 
@@ -78,7 +96,7 @@ export default new Vuex.Store({
             }
         },
 
-        async fetchWeather({ state, commit, getters }, cityName) { // <-- perbaiki nama
+        async fetchWeather({ state, commit, getters, dispatch }, cityName) { // <-- perbaiki nama
             const key = cacheKey(cityName, state.units);
 
             const cachedData = getters.cached(cityName, state.units);
@@ -90,6 +108,7 @@ export default new Vuex.Store({
             try {
                 const res = await getCurrentWeather(cityName, state.units);
                 commit("setWeather", { key, payload: res.data });
+                dispatch("recordRecentSearch", res?.data?.name || cityName);
                 return res.data;
             } catch (error) {
                 const message =
@@ -118,12 +137,18 @@ export default new Vuex.Store({
             dispatch("persist");
         },
 
+        recordRecentSearch({ commit, dispatch }, cityName) {
+            commit("addRecentSearch", cityName);
+            dispatch("persist");
+        },
+
         persist({ state }) {
             localStorage.setItem(
                 "weather:state",
                 JSON.stringify({
                     units: state.units,
-                    favorites: state.favorites
+                    favorites: state.favorites,
+                    recentSearches: state.recentSearches   // 👈 NEW
                 })
             );
         }
