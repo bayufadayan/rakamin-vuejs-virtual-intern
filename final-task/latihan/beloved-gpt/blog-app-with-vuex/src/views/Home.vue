@@ -10,7 +10,9 @@ export default {
             showConfirm: false,
             pendingIndex: null,
             searchQuery: "",
-            sortBy: "newest"
+            sortBy: "newest",
+            currentPage: 1,
+            pageSize: 5
         };
     },
     components: { PostList, ConfirmModal },
@@ -54,7 +56,18 @@ export default {
                     break;
             }
             return base;
+        },
+
+        totalPages() { return Math.max(1, Math.ceil(this.filteredSortedPosts.length / this.pageSize)); },
+        pagedPosts() {
+            const start = (this.currentPage - 1) * this.pageSize;
+            return this.filteredSortedPosts.slice(start, start + this.pageSize);
         }
+    },
+    watch: {
+        searchQuery() { this.currentPage = 1; },
+        sortBy() { this.currentPage = 1; },
+        pageSize() { this.currentPage = 1; }
     },
     async created() {
         await this.$store.dispatch("loadPosts");
@@ -73,10 +86,24 @@ export default {
         },
         confirmRemove() {
             if (this.pendingIndex !== null) this.$store.dispatch("removePost", this.pendingIndex);
-            this.showConfirm = false; this.pendingIndex = null;
+            this.showConfirm = false;
+            this.pendingIndex = null;
+            this.$nextTick(() => {
+                if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+            });
         },
         cancelRemove() {
-            this.showConfirm = false; this.pendingIndex = null;
+            this.showConfirm = false;
+            this.pendingIndex = null;
+        },
+        prev() {
+            if (this.currentPage > 1) this.currentPage--;
+        },
+        next() {
+            if (this.currentPage < this.totalPages) this.currentPage++;
+        },
+        goTo(p) {
+            if (p >= 1 && p <= this.totalPages) this.currentPage = p;
         }
     }
 };
@@ -88,7 +115,7 @@ export default {
 
         <div class="card" style="padding:14px; margin-bottom:14px; display:grid; gap:10px;">
             <input class="input" v-model="searchQuery" placeholder="Cari Judul atau isi Post..." />
-            <div style="display:flex; gap:10px; align-items:center;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <label for="sort" style="color:var(--muted);">Sort:</label>
                 <select id="sort" class="input" style="max-width:220px;" v-model="sortBy">
                     <option value="newest">Terbaru → Terlama</option>
@@ -96,10 +123,24 @@ export default {
                     <option value="title-asc">Title A → Z</option>
                     <option value="title-desc">Title Z → A</option>
                 </select>
+
+                <label style="color:var(--muted); margin-left:12px;">Per halaman:</label>
+                <select class="input" style="max-width:120px;" v-model.number="pageSize">
+                    <option :value="5">5</option>
+                    <option :value="10">10</option>
+                    <option :value="15">15</option>
+                </select>
             </div>
         </div>
 
-        <PostList :posts="filteredSortedPosts" @remove="askRemove" />
+        <PostList :posts="pagedPosts" @remove="askRemove" />
+
+        <div class="card"
+            style="padding:12px; margin-top:12px; display:flex; gap:8px; align-items:center; justify-content:center;">
+            <button class="btn" @click="prev" :disabled="currentPage === 1">Prev</button>
+            <span style="color:var(--muted);">Page {{ currentPage }} / {{ totalPages }}</span>
+            <button class="btn" @click="next" :disabled="currentPage === totalPages">Next</button>
+        </div>
 
         <div class="actions" style="margin-top:16px; padding-bottom: 100px;">
             <router-link class="btn btn--primary" to="/add">+ Add Post</router-link>
