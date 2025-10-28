@@ -30,7 +30,7 @@ export default {
                 <div class="actions">
                     <button class="btn" @click.stop="$router.push('/post/' + (post.id || i))">Lihat</button>
                     <button class="btn" @click.stop="$router.push('/edit/' + (post.id || i))">Edit</button>
-                    <button class="btn btn--danger" @click.stop="$emit('remove', i)">Hapus</button>
+                    <button class="btn btn--danger" @click.stop="$emit('remove', post.id)">Hapus</button>
                 </div>
             </li>
         </ul>

@@ -1,16 +1,19 @@
 <script>
 import PostList from "../components/PostList.vue";
 import { generateDummyPosts } from "../utils/dummy";
+import ConfirmModal from "../components/ConfirmModal.vue";
 
 export default {
     name: "HomePage",
     data() {
         return {
+            showConfirm: false,
+            pendingIndex: null,
             searchQuery: "",
             sortBy: "newest"
         };
     },
-    components: { PostList },
+    components: { PostList, ConfirmModal },
     computed: {
         posts() {
             return this.$store.getters.posts;
@@ -64,7 +67,17 @@ export default {
         }
     },
     methods: {
-        remove(postIndex) { this.$store.dispatch("removePost", postIndex); }
+        askRemove(postIndex) {
+            this.pendingIndex = postIndex;
+            this.showConfirm = true;
+        },
+        confirmRemove() {
+            if (this.pendingIndex !== null) this.$store.dispatch("removePost", this.pendingIndex);
+            this.showConfirm = false; this.pendingIndex = null;
+        },
+        cancelRemove() {
+            this.showConfirm = false; this.pendingIndex = null;
+        }
     }
 };
 </script>
@@ -86,11 +99,13 @@ export default {
             </div>
         </div>
 
-        <PostList :posts="filteredSortedPosts" @remove="remove" />
+        <PostList :posts="filteredSortedPosts" @remove="askRemove" />
 
         <div class="actions" style="margin-top:16px; padding-bottom: 100px;">
             <router-link class="btn btn--primary" to="/add">+ Add Post</router-link>
         </div>
+
+        <ConfirmModal :open="showConfirm" @confirm="confirmRemove" @close="cancelRemove" />
     </div>
 </template>
 

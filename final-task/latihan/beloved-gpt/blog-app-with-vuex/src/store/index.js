@@ -15,8 +15,9 @@ export default new Vuex.Store({
         addPost(state, newPost) {
             state.posts.push(newPost);
         },
-        deletePost(state, postIndex) {
-            state.posts.splice(postIndex, 1);
+        deletePost(state, postId) {
+            const targetIndex = state.posts.findIndex(p => p.id === postId);
+            if (targetIndex !== -1) state.posts.splice(targetIndex, 1);
         },
         updatePost(state, updatedPost) {
             const targetIndex = state.posts.findIndex(
@@ -41,8 +42,8 @@ export default new Vuex.Store({
             commit("addPost", newPost);
             dispatch("savePosts");
         },
-        removePost({ commit, dispatch }, postIndex) {
-            commit("deletePost", postIndex);
+        removePost({ commit, dispatch }, postId) {
+            commit("deletePost", postId);
             dispatch("savePosts");
         },
         updateExistingPost({ commit, dispatch }, updatedPost) {
