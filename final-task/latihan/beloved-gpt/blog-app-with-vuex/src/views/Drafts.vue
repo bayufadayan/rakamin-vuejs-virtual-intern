@@ -1,5 +1,5 @@
 <script>
-import { listDrafts, deleteDraft, clearAllDrafts } from "@/utils/drafts";
+import { listDrafts, deleteDraftByKey, clearAllDrafts } from "@/utils/drafts";
 
 export default {
     name: "DraftsPage",
@@ -7,13 +7,43 @@ export default {
     created() { this.refresh(); },
     methods: {
         refresh() { this.drafts = listDrafts(); },
-        removeOne(key) { deleteDraft(key); this.refresh(); },
-        removeAll() {
-            if (confirm("Hapus semua draft?")) { clearAllDrafts(); this.refresh(); }
+        async removeOne(key) {
+            const res = await this.$swal.fire({
+                title: "Hapus draft ini?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Hapus",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#e11d48"
+            });
+            if (res.isConfirmed) {
+                deleteDraftByKey(key);
+                this.refresh();
+            }
+        },
+        async removeAll() {
+            const res = await this.$swal.fire({
+                title: "Hapus semua draft?",
+                text: "Aksi tidak bisa di-undo.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Hapus Semua",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#e11d48"
+            });
+            if (res.isConfirmed) {
+                clearAllDrafts();
+                this.refresh();
+            }
         },
         go(item) {
-            if (item.type === "add") this.$router.push({ path: "/add", query: { restore: 1 } });
-            else this.$router.push({ path: `/edit/${item.id}`, query: { restore: 1 } });
+            if (item.type === "add") {
+                this.$router.push({ path: "/add", query: { draft: `add:${item.id}` } });
+            } else {
+                const post = this.$store.getters.postById(item.id);
+                if (post && post.slug) this.$router.push(`/edit/${post.slug}`);
+                else this.$router.push("/"); // fallback
+            }
         },
         fmt(ts) { return new Date(ts).toLocaleString(); }
     }
@@ -50,3 +80,5 @@ export default {
         </div>
     </div>
 </template>
+
+<style scoped></style>

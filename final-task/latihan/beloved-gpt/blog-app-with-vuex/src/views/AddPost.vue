@@ -1,42 +1,54 @@
 <!-- eslint-disable vue/no-reserved-keys -->
 <script>
-const DRAFT_KEY = "draft:add-post";
+import { makeAddDraftId, getAddDraft, saveAddDraft } from "@/utils/drafts";
 
 export default {
     data() {
         return {
             title: "",
             content: "",
-            _t: null
+            draftId: null,
+            _t: null,
+            savedFlash: false
         };
     },
+
     created() {
-        const raw = localStorage.getItem("draft:add-post");
-        if (raw) {
-            const d = JSON.parse(raw);
-            const want = this.$route.query.restore ? true : confirm("Lanjutkan dari draft sebelumnya?");
-            if (want) { this.title = d.title || ""; this.content = d.content || ""; }
-            else localStorage.removeItem("draft:add-post");
+        const q = this.$route.query.draft;
+        if (q && q.startsWith("add:")) {
+            const id = q.replace("add:", "");
+            const found = getAddDraft(id);
+            if (found) {
+                this.draftId = id;
+                this.title = found.title || "";
+                this.content = found.content || "";
+            }
         }
     },
+
     watch: {
         title() { this.saveDraftDebounced(); },
         content() { this.saveDraftDebounced(); }
     },
+
     methods: {
+        ensureDraftId() {
+            if (!this.draftId) this.draftId = makeAddDraftId();
+        },
         saveDraft() {
-            localStorage.setItem(DRAFT_KEY, JSON.stringify({
-                title: this.title,
-                content: this.content,
-                savedAt: Date.now()
-            }));
+            this.ensureDraftId();
+            saveAddDraft(this.draftId, { title: this.title, content: this.content });
+            // flash badge "draft saved"
+            this.savedFlash = true;
+            clearTimeout(this._flashT);
+            this._flashT = setTimeout(() => (this.savedFlash = false), 1200);
         },
         saveDraftDebounced() {
             clearTimeout(this._t);
             this._t = setTimeout(this.saveDraft, 300);
         },
-        clearDraft() { localStorage.removeItem(DRAFT_KEY); },
-        save() {
+
+        async save() {
             if (!this.title.trim() || !this.content.trim()) return;
             this.$store.dispatch("addNewPost", {
                 id: Date.now(),
@@ -44,14 +56,31 @@ export default {
                 content: this.content.trim(),
                 createdAt: new Date().toISOString()
             });
-            this.clearDraft();
             this.$router.push("/");
         },
-        cancel() {
-            const ok = window.confirm("Buang draft ini?");
-            if (ok) this.clearDraft();
-            this.$router.push("/");
 
+        async cancel() {
+            const hasContent = this.title.trim() || this.content.trim();
+            if (!hasContent) return this.$router.push("/");
+
+            const res = await this.$swal.fire({
+                title: "Anda belum post ini",
+                text: "Mau simpan di Draft?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Simpan di Draft",
+                cancelButtonText: "Buang",
+                reverseButtons: true,
+                confirmButtonColor: "#16a34a",
+                cancelButtonColor: "#7a1a34"
+            });
+
+            if (res.isConfirmed) {
+                this.saveDraft();
+                this.$router.push("/");
+            } else {
+                this.$router.push("/");
+            }
         }
     }
 };
@@ -61,18 +90,37 @@ export default {
     <div>
         <h1 class="h1">Add Post</h1>
 
-        <form class="form card" @submit.prevent="save">
-            <div class="row">
-                <input class="input" v-model="title" placeholder="Title" />
-                <textarea class="textarea" v-model="content" placeholder="Content"></textarea>
+        <div class="form card" style="position:relative;">
+            <div v-show="savedFlash" class="draft-badge" aria-live="polite">
+                Draft tersimpan
             </div>
 
-            <div class="actions">
-                <button type="submit" class="btn btn--primary">Save</button>
-                <button type="button" class="btn btn--ghost" @click="cancel">Cancel</button>
-            </div>
-        </form>
+            <form @submit.prevent="save">
+                <div class="row">
+                    <input class="input" v-model="title" placeholder="Title" />
+                    <textarea class="textarea" v-model="content" placeholder="Content"></textarea>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn btn--primary">Publish</button>
+                    <button type="button" class="btn btn--ghost" @click="cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.draft-badge {
+    position: absolute;
+    top: -12px;
+    right: 12px;
+    background: rgba(22, 163, 74, .18);
+    border: 1px solid #215f4a;
+    color: #b9f6cf;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    box-shadow: var(--shadow);
+    transition: opacity .2s ease;
+}
+</style>
