@@ -48,6 +48,10 @@ export default new Vuex.Store({
         updateExistingPost({ commit, dispatch }, updatedPost) {
             commit("updatePost", updatedPost);
             dispatch("savePosts");
+        },
+        seedPosts({ commit, dispatch }, posts) {
+            commit("setPosts", posts);
+            dispatch("savePosts");
         }
     },
 
