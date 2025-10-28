@@ -7,6 +7,7 @@ export default new Vuex.Store({
     state: {
         posts: []
     },
+
     mutations: {
         setPosts(state, posts) {
             state.posts = posts;
@@ -18,12 +19,13 @@ export default new Vuex.Store({
             state.posts.splice(index, 1);
         }
     },
+
     actions: {
         loadPosts({ commit }) {
             const saved = JSON.parse(localStorage.getItem("posts")) || [];
             commit("setPosts", saved);
         },
-        savedPosts({ state }) {
+        savePosts({ state }) {
             localStorage.setItem("posts", JSON.stringify(state.posts));
         },
         addNewPost({ commit, dispatch }, post) {
@@ -35,6 +37,7 @@ export default new Vuex.Store({
             dispatch("savePosts");
         }
     },
+
     getters: {
         posts: state => state.posts
     }
