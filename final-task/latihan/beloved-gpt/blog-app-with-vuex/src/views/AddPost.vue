@@ -1,11 +1,6 @@
 <script>
 export default {
-    data() {
-        return {
-            title: "",
-            content: ""
-        };
-    },
+    data() { return { title: "", content: "" }; },
     methods: {
         save() {
             if (!this.title.trim() || !this.content.trim()) return;
@@ -23,37 +18,20 @@ export default {
 
 <template>
     <div>
-        <h1>Add Post</h1>
+        <h1 class="h1">Add Post</h1>
 
-        <form @submit.prevent="save">
-            <input v-model="title" placeholder="Title" />
-            <textarea v-model="content" placeholder="Content"></textarea>
+        <form class="form card" @submit.prevent="save">
+            <div class="row">
+                <input class="input" v-model="title" placeholder="Title" />
+                <textarea class="textarea" v-model="content" placeholder="Content"></textarea>
+            </div>
 
             <div class="actions">
-                <button type="submit">Save</button>
-                <router-link to="/">Cancel</router-link>
+                <button type="submit" class="btn btn--primary">Save</button>
+                <router-link class="btn btn--ghost" to="/">Cancel</router-link>
             </div>
         </form>
     </div>
 </template>
 
-
-<style scoped>
-.add {
-    max-width: 640px;
-    margin: 24px auto;
-}
-
-input,
-textarea {
-    width: 100%;
-    margin: 8px 0;
-    padding: 8px;
-}
-
-.actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-</style>
+<style scoped></style>

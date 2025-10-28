@@ -1,21 +1,16 @@
 <script>
 export default {
     props: ["id"],
-    data() {
-        return {
-            title: "",
-            content: "",
-            createdAt: null
-        };
-    },
+    data() { return { title: "", content: "", createdAt: null }; },
     created() {
         const post = this.$store.getters.postById(Number(this.id));
         if (post) {
             this.title = post.title;
             this.content = post.content;
             this.createdAt = post.createdAt;
+        } else {
+            this.$router.replace("/");
         }
-        else this.$router.replace("/");
     },
     methods: {
         save() {
@@ -29,18 +24,22 @@ export default {
             this.$router.push("/");
         }
     }
-}
+};
 </script>
 
 <template>
-    <div class="edit">
-        <h1>Edit Post</h1>
-        <form @submit.prevent="save">
-            <input v-model="title" placeholder="Title" />
-            <textarea v-model="content" placeholder="Content"></textarea>
+    <div>
+        <h1 class="h1">Edit Post</h1>
+
+        <form class="form card" @submit.prevent="save">
+            <div class="row">
+                <input class="input" v-model="title" placeholder="Title" />
+                <textarea class="textarea" v-model="content" placeholder="Content"></textarea>
+            </div>
+
             <div class="actions">
-                <button type="submit">Update</button>
-                <router-link to="/">Cancel</router-link>
+                <button type="submit" class="btn btn--primary">Update</button>
+                <router-link class="btn btn--ghost" to="/">Cancel</router-link>
             </div>
         </form>
     </div>

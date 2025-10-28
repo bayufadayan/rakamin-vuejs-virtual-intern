@@ -1,30 +1,28 @@
 <script>
-import PostList from '../components/PostList.vue';
+import PostList from "../components/PostList.vue";
 
 export default {
     name: "HomePage",
     components: { PostList },
     computed: {
-        posts() {
-            return this.$store.getters.posts;
-        },
+        posts() { return this.$store.getters.posts; },
     },
-    created() {
-        this.$store.dispatch("loadPosts");
-    },
+    created() { this.$store.dispatch("loadPosts"); },
     methods: {
-        remove(index) {
-            this.$store.dispatch("removePost", index);
-        }
+        remove(postIndex) { this.$store.dispatch("removePost", postIndex); }
     }
 };
 </script>
 
 <template>
     <div>
-        <h1>Blog Home</h1>
+        <h1 class="h1">Blog Home</h1>
+
         <PostList :posts="posts" @remove="remove" />
-        <router-link to="/add">+ Add Post</router-link>
+
+        <div class="actions" style="margin-top:16px;">
+            <router-link class="btn btn--primary" to="/add">+ Add Post</router-link>
+        </div>
     </div>
 </template>
 

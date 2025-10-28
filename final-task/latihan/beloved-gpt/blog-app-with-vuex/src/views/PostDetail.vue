@@ -2,9 +2,7 @@
 export default {
     props: ["id"],
     computed: {
-        post() {
-            return this.$store.getters.postById(Number(this.id));
-        }
+        post() { return this.$store.getters.postById(Number(this.id)); }
     },
     methods: {
         formatCreatedAt(timestamp) {
@@ -12,43 +10,29 @@ export default {
             try {
                 const date = new Date(timestamp);
                 return date.toLocaleString();
-            } catch {
-                return "";
-            }
+            } catch { return ""; }
         }
     }
-}
+};
 </script>
 
 <template>
     <div v-if="post">
-        <h1>{{ post.title }}</h1>
-        <p class="date">{{ formatCreatedAt(post.createdAt) }}</p>
-        <p class="content">{{ post.content }}</p>
+        <div class="card" style="padding:20px;">
+            <h1 class="h1" style="margin-top:0;">{{ post.title }}</h1>
+            <p class="time">{{ formatCreatedAt(post.createdAt) }}</p>
+            <p class="content">{{ post.content }}</p>
 
-        <div class="actions">
-            <router-link to="`/edit/${post.id}`"></router-link>
-            <router-link to="/">Kembali</router-link>
+            <div class="actions">
+                <router-link class="btn" :to="`/edit/${post.id}`">Edit</router-link>
+                <router-link class="btn btn--ghost" to="/">Kembali</router-link>
+            </div>
         </div>
     </div>
 
-    <p v-else>Post tidak ditemukan 😅</p>
+    <p v-else class="empty">Post tidak ditemukan 😅</p>
 </template>
 
 <style scoped>
-.date {
-    color: #777;
-    margin-bottom: 12px;
-    display: block;
-}
-
-.content {
-    white-space: pre-line;
-    margin-bottom: 20px;
-}
-
-.actions {
-    display: flex;
-    gap: 12px;
-}
+/* pakai util global, tambahan kecil lokal kalau perlu */
 </style>

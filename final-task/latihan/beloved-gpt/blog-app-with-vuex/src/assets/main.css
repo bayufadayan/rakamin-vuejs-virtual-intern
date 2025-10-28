@@ -1,35 +1,220 @@
-@import "./base.css";
+/* === Dark Green Theme — Global Base === */
+:root {
+  --bg: #0b1512;
+  /* background utama */
+  --surface: #0f1e1a;
+  /* kartu/nav */
+  --surface-2: #12251f;
+  /* hover/semuot */
+  --border: #1e2d28;
+  --text: #e6f4ee;
+  /* text utama */
+  --muted: #9bb7ac;
+  /* text sekunder */
+  --accent: #16a34a;
+  /* hijau utama */
+  --accent-2: #0ea5a6;
+  /* teal opsional */
+  --danger: #e11d48;
+  /* merah soft */
+  --shadow: 0 6px 24px rgba(0, 0, 0, .35);
+}
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+  height: 100%;
 }
 
-a,
-.green {
+body {
+  margin: 0;
+  background: radial-gradient(1200px 700px at 20% -10%, #12302755, transparent),
+    radial-gradient(1000px 600px at 120% 10%, #0c2a2240, transparent),
+    var(--bg);
+  color: var(--text);
+  font: 500 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Layout */
+.container {
+  max-width: 920px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+/* Nav */
+.nav {
+  background: linear-gradient(180deg, #12251f, #0f1e1a);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: sticky;
+  top: 16px;
+}
+
+.nav a {
+  color: var(--muted);
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+  padding: 8px 12px;
+  border-radius: 10px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.nav a:hover {
+  background: var(--surface-2);
+  color: var(--text);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.nav a.router-link-exact-active {
+  color: var(--text);
+  background: rgba(22, 163, 74, .18);
+  border: 1px solid #215f4a;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+/* Headings */
+.h1 {
+  font-size: 28px;
+  margin: 18px 0 12px;
+  letter-spacing: .3px;
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .15s ease;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: #17352c;
+}
+
+.btn--primary {
+  background: linear-gradient(180deg, #1ca45a, #128d4b);
+  border-color: #1b6e49;
+}
+
+.btn--primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.btn--danger {
+  background: #3b0b16;
+  border-color: #7a1a34;
+  color: #ffd7df;
+}
+
+.btn--danger:hover {
+  background: #5a1120;
+}
+
+/* Inputs */
+.input,
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  color: var(--text);
+  background: #0c1b17;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  transition: border .15s ease, box-shadow .15s ease;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #215f4a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, .2);
+}
+
+.textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+/* List/Item */
+.list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 16px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.time {
+  color: var(--muted);
+}
+
+.content {
+  color: #cfe7de;
+  margin: 8px 0 0;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* Empty state */
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 24px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: #0c1b1733;
+}
+
+/* Forms wrapper */
+.form {
+  composes: card;
+  padding: 20px;
+}
+
+.form .row {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
 }
