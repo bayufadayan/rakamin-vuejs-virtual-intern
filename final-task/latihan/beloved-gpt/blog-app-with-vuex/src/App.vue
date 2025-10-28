@@ -1,18 +1,20 @@
 <template>
   <div id="app">
-    <h1>Blog App</h1>
-    <PostList />
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/add">Add</router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
 <script>
-import PostList from './components/PostList.vue';
 
-export default {
-  components: {
-    PostList,
-  },
-};
 </script>
 
-<style scoped></style>
+<style scoped>
+nav {
+  display: flex;
+  gap: 10px;
+}
+</style>

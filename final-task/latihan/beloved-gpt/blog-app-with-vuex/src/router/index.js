@@ -1,21 +1,22 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Home from '../views/Home.vue';
+import AddPost from '../views/AddPost.vue';
 
-Vue.use(VueRouter)
+Vue.use(Router)
 
-const router = new VueRouter({
-  mode: 'history',
-  base: import.meta.env.BASE_URL,
+export default new Router({
+  mode: "history",
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
+      component: Home
     },
     {
-      path: '/about',
-      name: 'about',
+      path: "/add",
+      name: "add",
+      component: AddPost
     }
   ]
 })
-
-export default router
