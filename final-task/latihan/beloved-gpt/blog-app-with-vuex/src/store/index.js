@@ -5,40 +5,55 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        posts: []
+        posts: [] // daftar semua postingan
     },
 
     mutations: {
-        setPosts(state, posts) {
-            state.posts = posts;
+        setPosts(state, allPosts) {
+            state.posts = allPosts;
         },
-        addPost(state, post) {
-            state.posts.push(post);
+        addPost(state, newPost) {
+            state.posts.push(newPost);
         },
-        deletePost(state, index) {
-            state.posts.splice(index, 1);
+        deletePost(state, postIndex) {
+            state.posts.splice(postIndex, 1);
+        },
+        updatePost(state, updatedPost) {
+            const targetIndex = state.posts.findIndex(
+                post => post.id === updatedPost.id
+            );
+            if (targetIndex !== -1) {
+                state.posts.splice(targetIndex, 1, updatedPost);
+            }
         }
     },
 
     actions: {
         loadPosts({ commit }) {
-            const saved = JSON.parse(localStorage.getItem("posts")) || [];
-            commit("setPosts", saved);
+            const savedPosts =
+                JSON.parse(localStorage.getItem("posts")) || [];
+            commit("setPosts", savedPosts);
         },
         savePosts({ state }) {
             localStorage.setItem("posts", JSON.stringify(state.posts));
         },
-        addNewPost({ commit, dispatch }, post) {
-            commit("addPost", post);
+        addNewPost({ commit, dispatch }, newPost) {
+            commit("addPost", newPost);
             dispatch("savePosts");
         },
-        removePost({ commit, dispatch }, index) {
-            commit("deletePost", index);
+        removePost({ commit, dispatch }, postIndex) {
+            commit("deletePost", postIndex);
+            dispatch("savePosts");
+        },
+        updateExistingPost({ commit, dispatch }, updatedPost) {
+            commit("updatePost", updatedPost);
             dispatch("savePosts");
         }
     },
 
     getters: {
-        posts: state => state.posts
+        posts: state => state.posts,
+        postById: state => postId =>
+            state.posts.find(post => post.id === postId)
     }
 });
