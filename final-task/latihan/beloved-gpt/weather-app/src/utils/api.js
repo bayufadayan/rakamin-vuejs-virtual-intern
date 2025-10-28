@@ -7,6 +7,8 @@ export const api = axios.create({
     params: {
         appid: API_KEY
     },
-})
+});
 
-export const getCurrentWeather = (city, units='metric') => api.get("/weather", {params: {q: city, units}});
+export function getCurrentWeather(cityName, units = "metric") {
+    return api.get("/weather", { params: { q: cityName, units } });
+}
