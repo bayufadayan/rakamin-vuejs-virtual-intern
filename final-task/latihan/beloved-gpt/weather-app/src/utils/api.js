@@ -18,3 +18,9 @@ export function getCurrentWeather(cityName, units = "metric") {
         }
     });
 }
+
+export function getCurrentWeatherByCoords(lat, lon, units = "metric") {
+    return api.get("/weather", {
+        params: { lat, lon, units, appid: API_KEY }
+    });
+}

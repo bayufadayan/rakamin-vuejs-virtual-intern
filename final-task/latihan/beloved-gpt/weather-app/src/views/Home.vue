@@ -4,7 +4,9 @@ export default {
 
     data() {
         return {
-            cityInput: ""
+            cityInput: "",
+            lastFetchAtMs: 0,
+            debounceTimer: null
         };
     },
 
@@ -90,6 +92,39 @@ export default {
             this.$store.commit("clearRecent");
             this.$store.dispatch("persist");
         },
+
+        onCityInput() {
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                // optional: auto-fetch saat ketik berhenti
+                // this.fetchWeatherNow();
+            }, 400);
+        },
+
+        // geolocation
+        useMyLocation() {
+            if (!navigator.geolocation) {
+                this.$store.dispatch("showToast", { message: "Geolocation tidak tersedia", type: "error" });
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    const { latitude, longitude } = pos.coords || {};
+                    if (latitude == null || longitude == null) return;
+                    try {
+                        const data = await this.$store.dispatch("fetchWeatherByCoords", {
+                            lat: latitude,
+                            lon: longitude
+                        });
+                        if (data?.name) this.cityInput = data.name;
+                    } catch { /* toast sudah di store */ }
+                },
+                () => {
+                    this.$store.dispatch("showToast", { message: "Izin lokasi ditolak", type: "error" });
+                },
+                { maximumAge: 60000, timeout: 10000, enableHighAccuracy: true }
+            );
+        },
     }
 };
 </script>
@@ -123,6 +158,10 @@ export default {
                 </button>
             </div>
             <button class="link recent__clear" @click="clearRecent">Clear</button>
+        </div>
+
+        <div class="card geo">
+            <button class="btn btn--ghost" @click="useMyLocation">Use my location</button>
         </div>
 
 
@@ -160,25 +199,23 @@ export default {
 
             <div class="grid">
                 <div class="pill">
-                    Feels like:
-                    <b>{{ formatTemp(weatherData.main && weatherData.main.feels_like) }}</b>
+                    Feels like: <b>{{ formatTemp(weatherData.main && weatherData.main.feels_like) }}</b>
                 </div>
                 <div class="pill">
-                    Humidity:
-                    <b>{{ weatherData.main && weatherData.main.humidity }}%</b>
+                    Humidity: <b>{{ weatherData.main && weatherData.main.humidity }}%</b>
                 </div>
                 <div class="pill">
-                    Wind:
-                    <b>
-                        {{ weatherData.wind && Math.round(weatherData.wind.speed) }}
-                        {{ units === 'metric' ? 'm/s' : 'mph' }}
-                    </b>
+                    Wind: <b>{{ weatherData.wind && Math.round(weatherData.wind.speed) }} {{ units === 'metric' ? 'm/s'
+                        : 'mph' }}</b>
                 </div>
             </div>
         </div>
 
-        <div v-else class="card info">
-            Ketik nama kota lalu tekan Enter / klik Cari.
+        <!-- Empty state cakep -->
+        <div v-else class="card empty fade-in">
+            <div class="empty__art" aria-hidden="true"></div>
+            <h3 class="empty__title">Cari cuaca kota favoritmu</h3>
+            <p class="empty__desc">Ketik nama kota di atas atau pakai tombol <b>Use my location</b>.</p>
         </div>
     </div>
 </template>

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { getCurrentWeather } from "../utils/api";
+import { getCurrentWeather, getCurrentWeatherByCoords } from "../utils/api";
 
 Vue.use(Vuex);
 
@@ -17,7 +17,12 @@ export default new Vuex.Store({
         recentSearches: [],
         weatherByCity: {},
         loadingByKey: {},
-        errorByKey: {}
+        errorByKey: {},
+        toast: {
+            message: "",
+            type: "info",
+            visible: false
+        }
     },
 
     mutations: {
@@ -80,23 +85,26 @@ export default new Vuex.Store({
 
         clearRecent(state) {
             state.recentSearches = [];
+        },
+
+        setToast(state, { message, type = "info", visible = true }) {
+            state.toast = { message, type, visible };
+        },
+
+        hideToast(state) {
+            state.toast.visible = false;
         }
     },
 
     actions: {
         init({ commit }) {
             try {
-                const savedState = localStorage.getItem("weather:state");
-                if (savedState) {
-                    const parsedState = JSON.parse(savedState);
-                    commit("loadPersisted", parsedState);
-                }
-            } catch (error) {
-                console.error("Failed to load persisted state:", error);
-            }
+                const saved = localStorage.getItem("weather:state");
+                if (saved) commit("loadPersisted", JSON.parse(saved));
+            } catch { /* ignore */ }
         },
 
-        async fetchWeather({ state, commit, getters, dispatch }, cityName) { // <-- perbaiki nama
+        async fetchWeather({ state, commit, getters, dispatch }, cityName) {
             const key = cacheKey(cityName, state.units);
 
             const cachedData = getters.cached(cityName, state.units);
@@ -111,14 +119,34 @@ export default new Vuex.Store({
                 dispatch("recordRecentSearch", res?.data?.name || cityName);
                 return res.data;
             } catch (error) {
-                const message =
-                    error?.response?.data?.message ||
-                    error?.message ||
-                    "Fetch Failed";
+                const message = error?.response?.data?.message || error?.message || "Fetch Failed";
                 commit("setError", { key, message });
+                dispatch("showToast", { message: `Gagal ambil cuaca: ${message}`, type: "error" });
                 throw error;
             } finally {
                 commit("setLoading", { key, value: false });
+            }
+        },
+
+        async fetchWeatherByCoords({ state, commit, dispatch }, { lat, lon }) {
+            const tmpKey = cacheKey("@geo", state.units);
+            commit("setLoading", { key: tmpKey, value: true });
+            commit("setError", { key: tmpKey, message: null });
+
+            try {
+                const res = await getCurrentWeatherByCoords(lat, lon, state.units);
+                const cityName = res?.data?.name || `${lat.toFixed(2)},${lon.toFixed(2)}`;
+                const finalKey = cacheKey(cityName, state.units);
+                commit("setWeather", { key: finalKey, payload: res.data });
+                dispatch("recordRecentSearch", cityName);
+                return res.data;
+            } catch (error) {
+                const message = error?.response?.data?.message || error?.message || "Fetch Failed";
+                commit("setError", { key: tmpKey, message });
+                dispatch("showToast", { message: `Gagal ambil lokasi: ${message}`, type: "error" });
+                throw error;
+            } finally {
+                commit("setLoading", { key: tmpKey, value: false });
             }
         },
 
@@ -128,17 +156,14 @@ export default new Vuex.Store({
             dispatch("persist");
         },
 
-        toggleFavorite({ state, commit, dispatch }, cityName) {
-            if (state.favorites.includes(cityName)) {
-                commit("removeFavorite", cityName);
-            } else {
-                commit("addFavorite", cityName);
-            }
+        recordRecentSearch({ commit, dispatch }, cityName) {
+            commit("addRecentSearch", cityName);
             dispatch("persist");
         },
 
-        recordRecentSearch({ commit, dispatch }, cityName) {
-            commit("addRecentSearch", cityName);
+        toggleFavorite({ state, commit, dispatch }, cityName) {
+            if (state.favorites.includes(cityName)) commit("removeFavorite", cityName);
+            else commit("addFavorite", cityName);
             dispatch("persist");
         },
 
@@ -148,9 +173,15 @@ export default new Vuex.Store({
                 JSON.stringify({
                     units: state.units,
                     favorites: state.favorites,
-                    recentSearches: state.recentSearches   // 👈 NEW
+                    recentSearches: state.recentSearches,
+                    weatherByCity: state.weatherByCity
                 })
             );
+        },
+
+        showToast({ commit }, { message, type = "info", duration = 2200 }) {
+            commit("setToast", { message, type, visible: true });
+            setTimeout(() => commit("hideToast"), duration);
         }
     },
 

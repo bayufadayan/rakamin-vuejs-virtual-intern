@@ -1,6 +1,8 @@
 <script>
+import Toast from "./components/Toast.vue";
 export default {
-  name: "AppRoot"
+  name: "AppRoot",
+  components: { Toast }
 };
 </script>
 
@@ -11,6 +13,7 @@ export default {
       <router-link to="/favorites" exact-active-class="active">Favorites</router-link>
     </nav>
     <router-view />
+    <Toast />
   </div>
 </template>
 
