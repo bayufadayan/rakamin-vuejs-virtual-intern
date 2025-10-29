@@ -198,15 +198,26 @@ export default {
             </div>
 
             <div class="grid">
-                <div class="pill">
-                    Feels like: <b>{{ formatTemp(weatherData.main && weatherData.main.feels_like) }}</b>
+                <!-- Feels Like -->
+                <div class="pill pill--with-icon">
+                    <font-awesome-icon icon="thermometer-half" class="pill__icon" />
+                    <span>Feels like:</span>
+                    <b>{{ formatTemp(weatherData.main && weatherData.main.feels_like) }}</b>
                 </div>
-                <div class="pill">
-                    Humidity: <b>{{ weatherData.main && weatherData.main.humidity }}%</b>
+
+                <!-- Humidity -->
+                <div class="pill pill--with-icon">
+                    <font-awesome-icon icon="tint" class="pill__icon" />
+                    <span>Humidity:</span>
+                    <b>{{ weatherData.main && weatherData.main.humidity }}%</b>
                 </div>
-                <div class="pill">
-                    Wind: <b>{{ weatherData.wind && Math.round(weatherData.wind.speed) }} {{ units === 'metric' ? 'm/s'
-                        : 'mph' }}</b>
+
+                <!-- Wind -->
+                <div class="pill pill--with-icon">
+                    <font-awesome-icon icon="wind" class="pill__icon" />
+                    <span>Wind:</span>
+                    <b>{{ Math.round(weatherData.wind && weatherData.wind.speed) }} {{ units === 'metric' ? 'm/s' :
+                        'mph' }}</b>
                 </div>
             </div>
         </div>

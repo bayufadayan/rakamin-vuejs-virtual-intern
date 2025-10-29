@@ -216,9 +216,42 @@ a:hover {
 .pill {
   background: #0c1815;
   border: 1px solid var(--border);
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   color: var(--text);
+  transition: background .2s, transform .15s;
+}
+
+/* Hover Effect */
+.pill:hover {
+  background: rgba(255, 255, 255, .06);
+  transform: translateY(-2px);
+}
+
+/* Icon size & look */
+.pill__icon {
+  font-size: 18px;
+  opacity: .9;
+}
+
+/* Strong number highlight */
+.pill b {
+  font-size: 15px;
+}
+
+/* Optional variant if text panjang */
+.pill--with-icon span {
+  white-space: nowrap;
+}
+
+/* Grid responsive */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* meta/rows */
@@ -437,6 +470,13 @@ a:hover {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(8px);
+}
+
+.nav-item {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar a {
