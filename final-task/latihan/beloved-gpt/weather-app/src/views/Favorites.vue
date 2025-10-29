@@ -27,63 +27,25 @@ export default {
             Belum ada kota favorit. Cari kota di Home lalu klik “Jadikan Favorit”.
         </div>
 
-        <ul v-else class="list">
-            <li v-for="city in favorites" :key="city" class="card row space">
-                <div class="city">{{ city }}</div>
-                <div class="actions">
-                    <button class="btn btn--primary" @click="openCity(city)">Lihat</button>
-                    <button class="btn" @click="removeCity(city)">Hapus</button>
+        <ul v-else class="favorites">
+            <li v-for="city in favorites" :key="city" class="fav-item">
+                <div class="fav-meta">
+                    <div class="fav-avatar" aria-hidden="true">
+                        {{ city.slice(0, 1).toUpperCase() }}
+                    </div>
+                    <div class="fav-text">
+                        <div class="fav-title">{{ city }}</div>
+                        <div class="fav-sub">Kota favorit kamu</div>
+                    </div>
+                </div>
+
+                <div class="fav-actions">
+                    <button class="btn btn--ghost" @click="openCity(city)">Lihat</button>
+                    <button class="btn btn--danger" @click="removeCity(city)">Hapus</button>
                 </div>
             </li>
         </ul>
     </div>
 </template>
 
-<style scoped>
-.container {
-    max-width: 720px;
-    margin: 24px auto;
-    display: grid;
-    gap: 14px;
-}
-
-.card {
-    border: 1px solid #e6e6e6;
-    border-radius: 10px;
-    padding: 14px;
-    background: #fff;
-}
-
-.list {
-    display: grid;
-    gap: 10px;
-}
-
-.row.space {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.btn {
-    border: 1px solid #d6d6d6;
-    background: #f7f7f7;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn--primary {
-    background: #155e75;
-    color: #eaffff;
-    border-color: #0b3a47;
-}
-
-.city {
-    font-weight: 600;
-}
-
-.info {
-    background: #fafafa;
-}
-</style>
+<style scoped></style>
